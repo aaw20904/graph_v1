@@ -12,10 +12,11 @@ let Hystogram = (function () {
      paintScale: function (maxX, maxY, settings) {
        let offset = 0;
        let tmp =0;   
+       let tmpCoords = {};
        let ctx = settings.getCtx(settings.nodeID);
           startPoint = {};
           startPoint.x = (1 - settings.diagramArea) / 2;
-          startPoint.y = 1 - ((1- settings.diagramArea) / 2);
+          startPoint.y = (1 - settings.diagramArea) / 2;
           /*assign a concrete value*/
           startPoint.x *= ctx.canvas.clientWidth;
           startPoint.y *= ctx.canvas.clientHeight;
@@ -23,22 +24,27 @@ let Hystogram = (function () {
           ctx.lineWidth = 2;
           ctx.beginPath ();
           /*Y axis*/
-          ctx.moveTo (startPoint.x, startPoint.y);
-          ctx.lineTo (startPoint.x, ((1 - settings.diagramArea)/2) * ctx.canvas.clientHeight);  
+          settings.moveToDekart(startPoint.x, startPoint.y, settings);
+          settings.lineToDekart(startPoint.x + (settings.limits.w * settings.diagramArea) , startPoint.y, settings);
+          ctx.stroke();
+          ctx.beginPath ();
           /* X axis*/
-          ctx.moveTo (startPoint.x, startPoint.y);
-          ctx.lineTo ((settings.diagramArea * ctx.canvas.clientWidth) + startPoint.x, startPoint.y); 
+          settings.moveToDekart(startPoint.x, startPoint.y, settings);
+          settings.lineToDekart(startPoint.x, startPoint.y + (settings.limits.h * settings.diagramArea), settings);
           ctx.stroke();
           /*a vertical scale*/
+          ctx.beginPath();
           while (tmp < 4) {
             offset += (settings.diagramArea * ctx.canvas.clientHeight) / 4;
-            ctx.moveTo (startPoint.x * 0.9, (((1 - settings.diagramArea)/2) * ctx.canvas.clientHeight) + offset);
-            ctx.lineTo (startPoint.x, (((1 - settings.diagramArea)/2) * ctx.canvas.clientHeight) + offset);
+            settings.moveToDekart (startPoint.x * 0.9, startPoint.y + offset, settings);
+            settings.lineToDekart (startPoint.x, startPoint.y + offset, settings);
             tmp++;
             ctx.stroke();
           }
 
      },
+  
+     
      /*update a private members */ 
     updateWindowLimits: function (settings) {
        /*save  window settings in a private settings object*/
@@ -76,7 +82,31 @@ let Hystogram = (function () {
                   console.log(z);
                   return null;
                 }
-              }
+              },
+              /*transtate coords - zero[lower left corner]*/
+              toDekart: function (x, y, settings) {
+               let result = {};
+               result.y = settings.limits.h - y;
+                result.x = x;
+               return result;
+              },
+              lineToDekart: function (x, y, settings) {
+                let ctx = settings.getCtx(settings.nodeID);
+                ctx.lineTo(x, settings.limits.h - y); 
+               },
+               moveToDekart: function (x, y, settings) {
+                let ctx = settings.getCtx(settings.nodeID);
+                ctx.moveTo(x, settings.limits.h - y); 
+               },
+               fillRectDekart: function (x, y, w, h, settings) {
+                let ctx = settings.getCtx(settings.nodeID);
+                ctx.fillRect(x, settings.limits.h - y, w, h); 
+               },
+               textDekart: function (text, x, y, maxWidth, settings) {
+                let ctx = settings.getCtx(settings.nodeID);
+                ctx.fillText(text, x, settings.limits.h - y, maxWidth); 
+               },
+
 
             }
        }

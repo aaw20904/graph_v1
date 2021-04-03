@@ -58,6 +58,7 @@ let Hystogram = (function () {
 
      /*update a private members */ 
     updateWindowLimits: function (settings) {
+      console.log(this.settings);
        /*save  window settings in a private settings object*/
        settings.limits.w = window.innerWidth;
        settings.limits.h = window.innerWidth * 0.66; 
@@ -72,6 +73,7 @@ let Hystogram = (function () {
     rorExample: if countOfItems equals 10, THEN 
     the order can be in range from 0 to 10*/
     paintItem (order, parameter, color, letter, privM) {
+      
         let settings = privM.settings;
         settings.canvasCtx.fillStyle = color;
         let step = (settings.limits.w * settings.diagramArea) / settings.countOfItems;

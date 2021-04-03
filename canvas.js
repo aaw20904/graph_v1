@@ -153,14 +153,17 @@ let Hystogram = (function () {
           secM.settings.colorTable.add({color:'red',letter:"J"});
 
          }
-         test () {
-           let priv = mapAccess.get(this);
-           priv.updateWindowLimits(priv.settings);
-           priv.paintScale(0,0,priv);
+       
+         updateCanvasView(){
+          let priv = mapAccess.get(this);
+          priv.updateWindowLimits(priv.settings);
+          priv.clearCanvas(priv.settings);
+
          }
 
          paintHystogram (dataSet, maxValue) {
             let privM = mapAccess.get(this);
+            privM.paintScale(0,0,privM);
             /*max value of the function*/
             privM.settings.maxValY = maxValue;
             /*number of counts*/
@@ -186,7 +189,7 @@ let Hystogram = (function () {
 
     window.onload = function () {
        let q = new Hystogram("canvas001");
-       q.test();   
+      
        let base = new Set();
        base.add(25);
        base.add(50)
@@ -194,5 +197,10 @@ let Hystogram = (function () {
        base.add(99);
        base.add(51);
        base.add(27);
+       q.updateCanvasView();
        q.paintHystogram(base, 100);
+       window.addEventListener("resize",()=>{
+        q.updateCanvasView();
+        q.paintHystogram(base, 100);
+       },false);
     }
